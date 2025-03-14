@@ -10,8 +10,8 @@ namespace Invector.vCharacterController
 
             if (inputSmooth == Vector3.zero)
             {
-                transform.position = animator.rootPosition;
-                transform.rotation = animator.rootRotation;
+                //transform.position = animator.rootPosition;
+                //transform.rotation = animator.rootRotation;
             }
 
             if (useRootMotion)
@@ -37,6 +37,21 @@ namespace Invector.vCharacterController
             if (!useRootMotion)
                 MoveCharacter(moveDirection);
         }
+        public virtual void AimControlRotationType(bool can)
+        {
+            if (lockRotation) return;
+
+            bool validInput = input != Vector3.zero || (isStrafing ? strafeSpeed.rotateWithCamera : freeSpeed.rotateWithCamera);
+
+            if (validInput || can)
+            {
+                // calculate input smooth
+                inputSmooth = Vector3.Lerp(inputSmooth, input, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
+
+                Vector3 dir = rotateTarget.forward;
+                RotateToDirection(dir);
+            }
+        }
 
         public virtual void ControlRotationType()
         {
@@ -48,7 +63,6 @@ namespace Invector.vCharacterController
             {
                 // calculate input smooth
                 inputSmooth = Vector3.Lerp(inputSmooth, input, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
-
                 Vector3 dir = (isStrafing && (!isSprinting || sprintOnlyFree == false) || (freeSpeed.rotateWithCamera && input == Vector3.zero)) && rotateTarget ? rotateTarget.forward : moveDirection;
                 RotateToDirection(dir);
             }
@@ -119,10 +133,10 @@ namespace Invector.vCharacterController
             isJumping = true;
 
             // trigger jump animations
-            if (input.sqrMagnitude < 0.1f)
-                animator.CrossFadeInFixedTime("Jump", 0.1f);
-            else
-                animator.CrossFadeInFixedTime("JumpMove", .2f);
+            //if (input.sqrMagnitude < 0.1f)
+            //    animator.CrossFadeInFixedTime("Jump", 0.1f);
+            //else
+            //    animator.CrossFadeInFixedTime("JumpMove", .2f);
         }
     }
 }

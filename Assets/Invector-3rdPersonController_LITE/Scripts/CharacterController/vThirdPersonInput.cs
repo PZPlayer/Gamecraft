@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Gamecraft.Player;
+using UnityEngine;
 
 namespace Invector.vCharacterController
 {
@@ -10,14 +11,26 @@ namespace Invector.vCharacterController
         public string horizontalInput = "Horizontal";
         public string verticallInput = "Vertical";
         public KeyCode jumpInput = KeyCode.Space;
+        public KeyCode AimInputKey = KeyCode.Mouse1;
+        public KeyCode ShootInputKey = KeyCode.Mouse0;
         public KeyCode strafeInput = KeyCode.Tab;
         public KeyCode sprintInput = KeyCode.LeftShift;
+        public KeyCode InventoryKey1 = KeyCode.Alpha1;
+        public KeyCode InventoryKey2 = KeyCode.Alpha2;
+        public KeyCode InventoryKey3 = KeyCode.Alpha3;
+        public DashSetting DashForward;
+        public DashSetting DashBack;
+        public DashSetting DashRight;
+        public DashSetting DashLeft;
 
         [Header("Camera Input")]
         public string rotateCameraXInput = "Mouse X";
         public string rotateCameraYInput = "Mouse Y";
 
         [HideInInspector] public vThirdPersonController cc;
+        [HideInInspector] public Aim AimSc;
+        [HideInInspector] public Inventory Inv;
+        [HideInInspector] public Dash DashController;
         [HideInInspector] public vThirdPersonCamera tpCamera;
         [HideInInspector] public Camera cameraMain;
 
@@ -33,7 +46,7 @@ namespace Invector.vCharacterController
         {
             cc.UpdateMotor();               // updates the ThirdPersonMotor methods
             cc.ControlLocomotionType();     // handle the controller locomotion type and movespeed
-            cc.ControlRotationType();       // handle the controller rotation type
+            if(!AimSc.isAiming) cc.ControlRotationType();       // handle the controller rotation type
         }
 
         protected virtual void Update()
@@ -52,6 +65,9 @@ namespace Invector.vCharacterController
         protected virtual void InitilizeController()
         {
             cc = GetComponent<vThirdPersonController>();
+            DashController = GetComponent<Dash>();
+            AimSc = GetComponent<Aim>();
+            Inv = GetComponent<Inventory>();
 
             if (cc != null)
                 cc.Init();
@@ -79,12 +95,58 @@ namespace Invector.vCharacterController
             SprintInput();
             StrafeInput();
             JumpInput();
+            DashInput();
+            AimInput();
+            InventoryInput();
+        }
+
+        public virtual void InventoryInput()
+        {
+            if (Input.GetKeyDown(InventoryKey1))
+            {
+                Inv.ChangeItem(1);
+            }
+            else if (Input.GetKeyDown(InventoryKey2))
+            {
+                Inv.ChangeItem(2);
+            }
+            else if (Input.GetKeyDown(InventoryKey3))
+            {
+                Inv.ChangeItem(3);
+            }
+        }
+
+        public virtual void AimInput()
+        {
+            if (Input.GetKey(AimInputKey))
+            {
+                AimSc.OnStartAiming();
+                cc.AimControlRotationType(true);
+            }
+            else if (Input.GetKeyUp(AimInputKey))
+            {
+                AimSc.OnEndAiming();
+            }
+
+            if (Input.GetKey(ShootInputKey))
+            {
+                Inv.UseItem();
+            }
         }
 
         public virtual void MoveInput()
         {
             cc.input.x = Input.GetAxis(horizontalInput);
             cc.input.z = Input.GetAxis(verticallInput);
+        }
+
+        public void DashInput()
+        {
+            DashController.IfGrounded = JumpConditions();
+            if (Input.GetKey(DashForward.Key) && Input.GetKey(KeyCode.LeftControl))
+            {
+                DashController.StartCoroutine(DashController.Jump(transform.forward, DashForward.Power));
+            }
         }
 
         protected virtual void CameraInput()
