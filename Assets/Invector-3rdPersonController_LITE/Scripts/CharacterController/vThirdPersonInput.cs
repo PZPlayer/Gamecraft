@@ -138,6 +138,7 @@ namespace Invector.vCharacterController
         {
             cc.input.x = Input.GetAxis(horizontalInput);
             cc.input.z = Input.GetAxis(verticallInput);
+            cc.ifAiming = AimSc.isAiming;
         }
 
         public void DashInput()

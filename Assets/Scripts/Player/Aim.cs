@@ -1,3 +1,4 @@
+using Cinemachine;
 using Hydra.Player;
 using System.Collections;
 using System.Collections.Generic;
