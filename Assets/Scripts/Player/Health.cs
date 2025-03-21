@@ -10,7 +10,7 @@ namespace Gamecraft.Player
         [SerializeField] private UnityEvent OnDeath;
 
         [SerializeField] private int _maxHealth;
-        private int curHealth;
+        [SerializeField] private int curHealth;
 
         void Start ()
         {

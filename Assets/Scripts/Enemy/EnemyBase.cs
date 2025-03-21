@@ -24,6 +24,13 @@ namespace Gamecraft.Enemy
         private bool isWaiting = false;
         private float stopDistance = 3f; // Дистанция остановки перед точкой
 
+        private EnemyGun gun;
+
+        private void Start()
+        {
+            gun = GetComponent<EnemyGun>();
+        }
+
         void Update()
         {
             if (target == null)
@@ -95,6 +102,7 @@ namespace Gamecraft.Enemy
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, _detectionRange);
             foreach (var hitCollider in hitColliders)
             {
+                if (hitCollider == transform.GetComponent<Collider>()) continue;
                 Health health = hitCollider.GetComponent<Health>();
                 if (health != null)
                 {
@@ -149,6 +157,7 @@ namespace Gamecraft.Enemy
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
                 }
 
+                gun.Shoot();
                 Debug.Log("Цель в зоне поражения!");
             }
         }
