@@ -36,12 +36,14 @@ namespace Gamecraft.Player
         public void OnStartAiming()
         {
             isAiming = true;
+            GameManager.Instance.ifAiming = true;
             CursorControll.CursorSetImage(_aimImg);
         }
 
         public void OnEndAiming()
         {
             isAiming = false;
+            GameManager.Instance.ifAiming = false;
             CursorControll.HideCursor();
         }
     }

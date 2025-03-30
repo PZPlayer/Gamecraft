@@ -77,7 +77,6 @@ namespace Invector.vCharacterController
         {
             if (tpCamera == null)
             {
-                tpCamera = FindObjectOfType<vThirdPersonCamera>();
                 if (tpCamera == null)
                     return;
                 if (tpCamera)

@@ -1,53 +1,62 @@
 using Gamecraft.Guns;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gamecraft.Player
 {
+    [Serializable]
+    public struct ItemOnScene
+    {
+        public GameObject ItemGameObject;
+        public Item ItemInfo;
+    }
     public class Inventory : MonoBehaviour
     {
-        [SerializeField] private GameObject[] _item;
-        private Aim aim;
+        [SerializeField] private ItemOnScene[] _item;
         private int selected = 0;
-
-        private void Start()
-        {
-            aim = GetComponent<Aim>();
-        }
 
         public void ChangeItem(int index)
         {
-            if (index >= _item.Length)
+            if ((index >= _item.Length) || index == selected)
             {
                 HideAllItems();
+                selected = 0;
                 return;
             }
             selected = index;
+            print(selected);
             UpdateItem();
         }
 
         public void UseItem()
         {
-            if (selected == 0)
+            if (selected == 0 || _item[selected].ItemGameObject == null)
             {
                 HideAllItems();
                 return;
             }
-            _item[selected].GetComponent<IdleGun>().isAiming = aim.isAiming;
-            _item[selected].GetComponent<IUsable>().Use();
+            _item[selected].ItemGameObject.GetComponent<IUsable>().Use();
         }
 
         private void UpdateItem()
         {
             HideAllItems();
-            _item[selected].SetActive(true);
+            if (_item[selected].ItemGameObject == null)
+            {
+                HideAllItems();
+                return;
+            }
+            _item[selected].ItemGameObject.SetActive(true);
         }
 
         private void HideAllItems()
         {
-            foreach (GameObject obj in _item)
+            foreach (ItemOnScene itm in _item)
             {
+                GameObject obj = itm.ItemGameObject;   
+                if (obj == null) continue;
                 obj.SetActive(false);
             }
         }

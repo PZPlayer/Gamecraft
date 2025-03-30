@@ -5,6 +5,14 @@ namespace Invector.vCharacterController
     public class vThirdPersonController : vThirdPersonAnimator
     {
         [HideInInspector] public bool ifAiming;
+
+        [SerializeField] private Animator _anmtr;
+
+        private void Start()
+        {
+            animator = _anmtr;
+        }
+
         public virtual void ControlAnimatorRootMotion()
         {
             if (!this.enabled) return;
@@ -74,7 +82,14 @@ namespace Invector.vCharacterController
             if (input.magnitude <= 0.01)
             {
                 moveDirection = Vector3.Lerp(moveDirection, Vector3.zero, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
+                animator.SetBool("Move", false);
+                if(isStrafing) animator.SetBool("Run", true);
                 return;
+            }
+            else
+            {
+                animator.SetBool("Move", true);
+                animator.SetBool("Run", false);
             }
 
             if (referenceTransform && !rotateByWorld)

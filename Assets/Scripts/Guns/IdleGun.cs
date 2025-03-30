@@ -1,5 +1,4 @@
 using Gamecraft.Player;
-using System.Collections;
 using UnityEngine;
 
 public interface IUsable
@@ -48,8 +47,15 @@ namespace Gamecraft.Guns
 
         private void Update()
         {
+            isAiming = GameManager.Instance.ifAiming;
+
             coolDown += Time.deltaTime;
 
+            DrawLine();
+        }
+
+        private void DrawLine()
+        {
             Vector3 cameraPosition = Camera.main.transform.position;
             cameraForward = Camera.main.transform.forward;
 
