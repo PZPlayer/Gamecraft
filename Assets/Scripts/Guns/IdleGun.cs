@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface IUsable
 {
-    public void Use();
+    public bool Use();
 }
 
 namespace Gamecraft.Guns
@@ -47,12 +47,13 @@ namespace Gamecraft.Guns
             lineRenderer.enabled = false;
         }
 
-        public void Use()
+        public bool Use()
         {
-            if (coolDown < _fireRate) return;
+            if (coolDown < _fireRate) return true;
             coolDown = 0;
             _animator.SetTrigger("Shoot");
             Invoke("Shoot", 0.2f);
+            return true;
         }
 
         private void Update()

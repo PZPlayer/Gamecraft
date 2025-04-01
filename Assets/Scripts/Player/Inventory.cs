@@ -49,7 +49,19 @@ namespace Gamecraft.Player
                 HideAllItems();
                 return;
             }
-            _item[selected].ItemGameObject.GetComponent<IUsable>().Use();
+            bool ifCastItem = _item[selected].ItemGameObject.GetComponent<IUsable>().Use();
+            if(!ifCastItem)
+            {
+                UpdateItem();
+                LooseItem(selected);
+                UpdateQuickInv();
+            }
+        }
+
+        private void LooseItem(int index)
+        {
+            _item[index].ItemGameObject = null;
+            _item[index].ItemInfo = null;
         }
 
         private void UpdateItem()
@@ -67,20 +79,19 @@ namespace Gamecraft.Player
         {
             foreach (ItemOnScene itm in _item)
             {
-                if (itm.ItemInfo)
+                switch (itm.SlotIndex)
                 {
-                    switch (itm.SlotIndex)
-                    {
-                        case 0:
-                            _firstInvImage.sprite = itm.ItemInfo.Image;
-                            break;
-                        case 1:
-                            _secondInvImage.sprite = itm.ItemInfo.Image;
-                            break;
-                        case 2:
-                            _thirdInvImage.sprite = itm.ItemInfo.Image;
-                            break;
-                    } 
+                    case 1:
+                        _firstInvImage.sprite = itm.ItemInfo != null ? itm.ItemInfo.Image : null;
+                        break;
+                    case 2:
+                        _secondInvImage.sprite = itm.ItemInfo != null ? itm.ItemInfo.Image : null;
+                        break;
+                    case 3:
+                        _thirdInvImage.sprite = itm.ItemInfo != null ? itm.ItemInfo.Image : null;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
