@@ -17,18 +17,25 @@ namespace Gamecraft.Guns
         [SerializeField] protected float _damage;
         [SerializeField] protected float _range;
         [SerializeField] protected LayerMask _layerMask;
-        public bool isAiming;
-        private float coolDown;
-        private Vector3 cameraForward;
+
+        [SerializeField] private Animator _animator;
+
+        [SerializeField] private Material lineMaterial;
 
         [SerializeField] private float lineDistance = 10f;
         [SerializeField] private float lineDuration = 0.2f;
-        [SerializeField] private Material lineMaterial;
         [SerializeField] private float lineWidth = 0.05f;
 
+        private Vector3 cameraForward;
+
         private LineRenderer lineRenderer;
+
         private bool isLineActive = false;
+
         private float lineTimer = 0f;
+        private float coolDown;
+
+        public bool IsAiming;
 
         private void Start()
         {
@@ -42,12 +49,15 @@ namespace Gamecraft.Guns
 
         public void Use()
         {
-            Shoot();
+            if (coolDown < _fireRate) return;
+            coolDown = 0;
+            _animator.SetTrigger("Shoot");
+            Invoke("Shoot", 0.2f);
         }
 
         private void Update()
         {
-            isAiming = GameManager.Instance.ifAiming;
+            IsAiming = GameManager.Instance.ifAiming;
 
             coolDown += Time.deltaTime;
 
@@ -74,11 +84,8 @@ namespace Gamecraft.Guns
 
         protected virtual void Shoot()
         {
-            if (coolDown < _fireRate) return;
-            coolDown = 0;
-
-            Vector3 startPoint = isAiming ? Camera.main.transform.position : _shootPoint.transform.position;
-            Vector3 direction = isAiming ? cameraForward : _shootPoint.transform.forward;
+            Vector3 startPoint = IsAiming ? Camera.main.transform.position : _shootPoint.transform.position;
+            Vector3 direction = IsAiming ? cameraForward : _shootPoint.transform.forward;
 
             DrawShotLine(startPoint, direction);
 

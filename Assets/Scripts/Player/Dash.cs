@@ -28,6 +28,7 @@ namespace Gamecraft.Player
         public IEnumerator Jump(Vector3 direction, float power)
         {
             if (!canJump || !IfGrounded) yield break;
+            GameManager.Instance.PlayerAnimator.SetTrigger("Dash");
             canJump = false;
             rb.AddForce(Vector3.up * 300, ForceMode.Impulse);
             yield return new WaitForSeconds(0.1f);

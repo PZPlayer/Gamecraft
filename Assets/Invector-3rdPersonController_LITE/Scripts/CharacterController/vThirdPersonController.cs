@@ -82,14 +82,15 @@ namespace Invector.vCharacterController
             if (input.magnitude <= 0.01)
             {
                 moveDirection = Vector3.Lerp(moveDirection, Vector3.zero, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
+                animator.SetBool("Run", false);
                 animator.SetBool("Move", false);
-                if(isStrafing) animator.SetBool("Run", true);
+                
                 return;
             }
             else
             {
                 animator.SetBool("Move", true);
-                animator.SetBool("Run", false);
+                animator.SetBool("Run", isSprinting ? true : false);
             }
 
             if (referenceTransform && !rotateByWorld)
