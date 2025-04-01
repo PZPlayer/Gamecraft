@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gamecraft.Player
 {
@@ -11,11 +12,21 @@ namespace Gamecraft.Player
     {
         public GameObject ItemGameObject;
         public Item ItemInfo;
+        public int SlotIndex;
     }
     public class Inventory : MonoBehaviour
     {
         [SerializeField] private ItemOnScene[] _item;
+        [SerializeField] private Image _firstInvImage;
+        [SerializeField] private Image _secondInvImage;
+        [SerializeField] private Image _thirdInvImage;
         private int selected = 0;
+
+
+        void Start ()
+        {
+            UpdateQuickInv();
+        }
 
         public void ChangeItem(int index)
         {
@@ -28,6 +39,7 @@ namespace Gamecraft.Player
             selected = index;
             print(selected);
             UpdateItem();
+            UpdateQuickInv();
         }
 
         public void UseItem()
@@ -49,6 +61,28 @@ namespace Gamecraft.Player
                 return;
             }
             _item[selected].ItemGameObject.SetActive(true);
+        }
+
+        private void UpdateQuickInv()
+        {
+            foreach (ItemOnScene itm in _item)
+            {
+                if (itm.ItemInfo)
+                {
+                    switch (itm.SlotIndex)
+                    {
+                        case 0:
+                            _firstInvImage.sprite = itm.ItemInfo.Image;
+                            break;
+                        case 1:
+                            _secondInvImage.sprite = itm.ItemInfo.Image;
+                            break;
+                        case 2:
+                            _thirdInvImage.sprite = itm.ItemInfo.Image;
+                            break;
+                    } 
+                }
+            }
         }
 
         private void HideAllItems()
