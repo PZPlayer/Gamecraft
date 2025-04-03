@@ -604,7 +604,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 337063185}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.095528066, y: 0.000000041954106, z: -0.000000004026207, w: 0.9954268}
+  m_LocalRotation: {x: 0.09552809, y: -0.0000000034076653, z: 3.270243e-10, w: 0.9954268}
   m_LocalPosition: {x: 0, y: 0, z: 0.00000023841858}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -738,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &489013329
 Transform:
   m_ObjectHideFlags: 0
@@ -809,6 +809,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Play
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Start
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1960185034}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11626,7 +11638,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218026438}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0733459, y: -0.0000000524762, z: 0.000000003859308, w: 0.9973066}
+  m_LocalRotation: {x: 0.07334586, y: -0.000000023206276, z: 0.0000000017066811, w: 0.99730664}
   m_LocalPosition: {x: 0, y: 0, z: 0.00000023841858}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12256,7 +12268,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649087142}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11775135, y: 0.000000029594995, z: -0.0000000035092642, w: 0.9930431}
+  m_LocalRotation: {x: 0.11775137, y: 0.000000029594995, z: -0.0000000035092644, w: 0.9930431}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

@@ -50,12 +50,26 @@ namespace Gamecraft.Player
                 return;
             }
             bool ifCastItem = _item[selected].ItemGameObject.GetComponent<IUsable>().Use();
+
             if(!ifCastItem)
             {
                 UpdateItem();
                 LooseItem(selected);
                 UpdateQuickInv();
             }
+        }
+
+        public bool AddItem(ItemOnScene item)
+        {
+            foreach (ItemOnScene itemOnScene in _item)
+            {
+                if (itemOnScene.SlotIndex == 0) continue;
+                if(itemOnScene.ItemInfo == null)
+                {
+                    _item[itemOnScene.SlotIndex] = item;
+                }
+            }
+            return false;
         }
 
         private void LooseItem(int index)

@@ -2,6 +2,12 @@ using Gamecraft.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
+public interface IPickable
+{
+    public void ShowCanPickUp();
+    public bool PickUp();
+}
+
 namespace Gamecraft.Items
 {
     public class DropOfWater : HealItem
@@ -17,8 +23,8 @@ namespace Gamecraft.Items
 
         public override bool Use()
         {
+            base.Use();
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, _healRadius);
-
             foreach (var collider in hitColliders)
             {
                 Health health = collider.GetComponent<Health>();
@@ -27,8 +33,7 @@ namespace Gamecraft.Items
                     health.HealBody(_healAmount);
                 }
             }
-            Disapear();
-            base.Use();
+            Invoke("Disapear", 0.1f);
             return false;
         }
     }

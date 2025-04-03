@@ -138,6 +138,7 @@ namespace Invector.vCharacterController
             cc.input.x = Input.GetAxis(horizontalInput);
             cc.input.z = Input.GetAxis(verticallInput);
             cc.ifAiming = AimSc.isAiming;
+            GameManager.Instance.PlayerAnimator.SetBool("ifGround", cc.isGrounded ? true : false);
         }
 
         public void DashInput()
@@ -204,7 +205,11 @@ namespace Invector.vCharacterController
         protected virtual void JumpInput()
         {
             if (Input.GetKeyDown(jumpInput) && JumpConditions())
+            {
                 cc.Jump();
+                GameManager.Instance.PlayerAnimator.SetTrigger("Jump");
+            }
+                
         }
 
         #endregion       
