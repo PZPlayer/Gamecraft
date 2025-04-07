@@ -66,9 +66,13 @@ namespace Gamecraft.Player
                 if (itemOnScene.SlotIndex == 0) continue;
                 if(itemOnScene.ItemInfo == null)
                 {
+                    item.SlotIndex = itemOnScene.SlotIndex;
                     _item[itemOnScene.SlotIndex] = item;
+                    break;
                 }
             }
+            UpdateItem();
+            UpdateQuickInv();
             return false;
         }
 

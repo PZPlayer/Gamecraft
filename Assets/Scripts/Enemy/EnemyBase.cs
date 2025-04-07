@@ -15,27 +15,30 @@ namespace Gamecraft.Enemy
         [SerializeField] private float _closeDetectionRange = 3f;
         [SerializeField] private float _fieldOfViewAngle = 90f;
         [SerializeField] private LayerMask _obstacleLayer;
-        [SerializeField] private float _waitTime = 2f; // Время ожидания у точки
+        [SerializeField] private float _waitTime = 2f;
 
         private int currentPatrolIndex = 0;
         private Transform target;
         private Health targetHealth;
         private bool isChasing = false;
         private bool isWaiting = false;
-        private float stopDistance = 3f; // Дистанция остановки перед точкой
+        private float stopDistance = 3f;
 
         private EnemyGun gun;
+        private NavMeshAgent navMeshAgent;
 
         private void Start()
         {
             gun = GetComponent<EnemyGun>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshAgent.speed = _moveSpeed;
         }
 
-        void Update()
+        private void Update()
         {
             if (target == null)
             {
-                if (!isWaiting)
+                if (!isWaiting && !navMeshAgent.pathPending && (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance || !navMeshAgent.hasPath))
                 {
                     Patrol();
                 }
@@ -47,57 +50,38 @@ namespace Gamecraft.Enemy
             }
         }
 
-        void Patrol()
+        private void Patrol()
         {
             if (_patrolPoints.Length == 0) return;
 
+            navMeshAgent.isStopped = false;
             Transform targetPoint = _patrolPoints[currentPatrolIndex];
-            float distanceToPoint = Vector3.Distance(transform.position, targetPoint.position);
-
-            if (distanceToPoint > stopDistance)
-            {
-                // Двигаемся к точке
-                Vector3 direction = (targetPoint.position - transform.position).normalized;
-                transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.deltaTime);
-
-                if (direction != Vector3.zero)
-                {
-                    Quaternion lookRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                }
-            }
-            else
-            {
-                // Останавливаемся и ждем
-                if (!isWaiting)
-                {
-                    StartCoroutine(WaitAtPoint());
-                }
-            }
+            navMeshAgent.SetDestination(targetPoint.position);
         }
 
         private IEnumerator WaitAtPoint()
         {
             isWaiting = true;
-            yield return new WaitForSeconds(_waitTime); // Ждем указанное время
+            navMeshAgent.isStopped = true;
+            yield return new WaitForSeconds(_waitTime);
             isWaiting = false;
+            navMeshAgent.isStopped = false;
 
-            // Выбираем случайную следующую точку
             currentPatrolIndex = GetRandomPatrolIndex();
         }
 
-        int GetRandomPatrolIndex()
+        private int GetRandomPatrolIndex()
         {
             int newIndex;
             do
             {
                 newIndex = Random.Range(0, _patrolPoints.Length);
-            } while (newIndex == currentPatrolIndex); // Убедимся, что новая точка не совпадает с текущей
+            } while (newIndex == currentPatrolIndex && _patrolPoints.Length > 1);
 
             return newIndex;
         }
 
-        void SearchForTarget()
+        private void SearchForTarget()
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, _detectionRange);
             foreach (var hitCollider in hitColliders)
@@ -116,6 +100,7 @@ namespace Gamecraft.Enemy
                             target = hitCollider.transform;
                             targetHealth = health;
                             isChasing = true;
+                            navMeshAgent.speed = _chaseSpeed;
                             break;
                         }
                     }
@@ -123,7 +108,7 @@ namespace Gamecraft.Enemy
             }
         }
 
-        void ChaseTarget()
+        private void ChaseTarget()
         {
             if (target == null) return;
 
@@ -134,22 +119,19 @@ namespace Gamecraft.Enemy
                 target = null;
                 targetHealth = null;
                 isChasing = false;
+                navMeshAgent.speed = _moveSpeed;
+                navMeshAgent.isStopped = false;
                 return;
             }
 
             if (distanceToTarget > _shootingDistance)
             {
-                Vector3 direction = (target.position - transform.position).normalized;
-                transform.position = Vector3.MoveTowards(transform.position, target.position, _chaseSpeed * Time.deltaTime);
-
-                if (direction != Vector3.zero)
-                {
-                    Quaternion lookRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                }
+                navMeshAgent.isStopped = false;
+                navMeshAgent.SetDestination(target.position);
             }
             else
             {
+                navMeshAgent.isStopped = true;
                 Vector3 direction = (target.position - transform.position).normalized;
                 if (direction != Vector3.zero)
                 {
@@ -157,8 +139,10 @@ namespace Gamecraft.Enemy
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
                 }
 
-                gun.Shoot();
-                Debug.Log("Цель в зоне поражения!");
+                if (gun != null)
+                {
+                    gun.Shoot();
+                }
             }
         }
 
@@ -185,4 +169,3 @@ namespace Gamecraft.Enemy
         }
     }
 }
-

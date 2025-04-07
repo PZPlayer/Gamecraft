@@ -22,6 +22,7 @@ namespace Gamecraft.Items
         void Update()
         {
             ShowCanPickUp();
+            PickUp();
         }
 
         public void ShowCanPickUp()
@@ -50,6 +51,11 @@ namespace Gamecraft.Items
                 if(_pickMeCanvas.transform.gameObject.activeSelf) _pickMeCanvas.transform.localScale = new Vector3(scale, scale, scale);
             }
         }
+        
+        protected virtual GameObject GetObjectOnScene()
+        {
+            return new GameObject();
+        }
 
         private void RotateCanvasToCamera()
         {
@@ -63,9 +69,11 @@ namespace Gamecraft.Items
             foreach (var collider in hitColliders)
             {
                 Inventory inv = collider.GetComponent<Inventory>();
-                if (inv != null)
+                if (inv != null && Input.GetKeyDown(KeyCode.E))
                 {
+                    if(_itemDesc.ItemGameObject == null) _itemDesc.ItemGameObject = GetObjectOnScene();
                     inv.AddItem(_itemDesc);
+                    Destroy(gameObject);
                 }
             }
             return false;
