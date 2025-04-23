@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Gamecraft.Enemy
 {
@@ -25,6 +26,8 @@ namespace Gamecraft.Enemy
 
         private float reloadTimer;
         private float fireRateTimer;
+
+        public UnityEvent OnShoot;
 
         private void Start()
         {
@@ -71,7 +74,7 @@ namespace Gamecraft.Enemy
             bullet.SetActive(false);
         }
 
-        public virtual void Shoot()
+        public virtual void Shoot(Animator anmtr = null)
         {
             if(fireRateTimer > _fireRate)
             {
@@ -79,7 +82,10 @@ namespace Gamecraft.Enemy
                 currentBullet++;
                 if(bullet != null)
                 {
+                    OnShoot.Invoke();
+                    if (anmtr != null) anmtr.SetTrigger("Shoot");
                     int randomShootPoint = Random.Range(0, _shootPoints.Length -1);
+                    bullet.SetActive(false);
                     bullet.SetActive(true);
                     bullet.transform.position = _shootPoints[randomShootPoint].transform.position;
                     bullet.transform.rotation = _shootPoints[randomShootPoint].transform.rotation;

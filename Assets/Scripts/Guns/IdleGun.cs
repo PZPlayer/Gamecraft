@@ -18,6 +18,10 @@ namespace Gamecraft.Guns
         [SerializeField] protected float _range;
         [SerializeField] protected LayerMask _layerMask;
 
+        [SerializeField] private bool _ifMain;
+
+        [SerializeField] private ItemOnScene _itemDesc;
+
         [SerializeField] private Animator _animator;
 
         [SerializeField] private Material lineMaterial;
@@ -25,6 +29,7 @@ namespace Gamecraft.Guns
         [SerializeField] private float lineDistance = 10f;
         [SerializeField] private float lineDuration = 0.2f;
         [SerializeField] private float lineWidth = 0.05f;
+        [SerializeField] private float _showUpRadius;
 
         private Vector3 cameraForward;
 
@@ -63,6 +68,24 @@ namespace Gamecraft.Guns
             coolDown += Time.deltaTime;
 
             DrawLine();
+            if(!_ifMain) PickUp();
+        }
+
+        public bool PickUp()
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, _showUpRadius);
+
+            foreach (var collider in hitColliders)
+            {
+                Inventory inv = collider.GetComponent<Inventory>();
+                if (inv != null && Input.GetKeyDown(KeyCode.E))
+                {
+                    if (_itemDesc.ItemGameObject == null) _itemDesc.ItemGameObject = GameManager.Instance.Gun;
+                    bool can = inv.AddItem(_itemDesc);
+                    if (can) Destroy(gameObject);
+                }
+            }
+            return false;
         }
 
         private void DrawLine()
@@ -88,9 +111,9 @@ namespace Gamecraft.Guns
             Vector3 startPoint = IsAiming ? Camera.main.transform.position : _shootPoint.transform.position;
             Vector3 direction = IsAiming ? cameraForward : _shootPoint.transform.forward;
 
-            DrawShotLine(startPoint, direction);
-
+    
             RaycastHit hit;
+            DrawShotLine(startPoint, direction);
             if (Physics.Raycast(startPoint, direction, out hit, _range, _layerMask))
             {
                 Debug.Log("Попал в: " + hit.collider.name);

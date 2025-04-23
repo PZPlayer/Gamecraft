@@ -4,6 +4,8 @@ public class GameManager : MonoBehaviour
 {
     public GameObject Player;
     public GameObject DropOfWater;
+    public GameObject Key;
+    public GameObject Gun;
     public Animator PlayerAnimator;
     public bool ifAiming;
 

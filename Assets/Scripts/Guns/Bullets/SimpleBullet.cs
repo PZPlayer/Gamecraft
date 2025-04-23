@@ -1,4 +1,5 @@
 using Gamecraft.Player;
+using System.Collections;
 using UnityEngine;
 
 namespace Gamecraft.Guns.Bullets

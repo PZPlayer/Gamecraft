@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace Gamecraft.Player
 {
@@ -20,6 +21,8 @@ namespace Gamecraft.Player
         [SerializeField] private Image _firstInvImage;
         [SerializeField] private Image _secondInvImage;
         [SerializeField] private Image _thirdInvImage;
+        [SerializeField] private Sprite _selectedSprite;
+        [SerializeField] private Sprite _normalSprite;
         private int selected = 0;
 
 
@@ -33,6 +36,7 @@ namespace Gamecraft.Player
             if ((index >= _item.Length) || index == selected)
             {
                 HideAllItems();
+                ResetIcons();
                 selected = 0;
                 return;
             }
@@ -61,6 +65,8 @@ namespace Gamecraft.Player
 
         public bool AddItem(ItemOnScene item)
         {
+            UpdateItem();
+            UpdateQuickInv();
             foreach (ItemOnScene itemOnScene in _item)
             {
                 if (itemOnScene.SlotIndex == 0) continue;
@@ -68,7 +74,9 @@ namespace Gamecraft.Player
                 {
                     item.SlotIndex = itemOnScene.SlotIndex;
                     _item[itemOnScene.SlotIndex] = item;
-                    break;
+                    UpdateItem();
+                    UpdateQuickInv();
+                    return true;
                 }
             }
             UpdateItem();
@@ -84,7 +92,28 @@ namespace Gamecraft.Player
 
         private void UpdateItem()
         {
+            ResetIcons();
             HideAllItems();
+
+            switch (selected)
+            {
+                case 1:
+                    _firstInvImage.transform.parent.GetComponentInParent<Image>().sprite = _selectedSprite;
+                    print("SELECTED1" + _firstInvImage.transform.parent.transform.parent.GetComponentInParent<Image>());
+                    break;
+                case 2:
+                    _secondInvImage.transform.parent.GetComponentInParent<Image>().sprite = _selectedSprite;
+                    print("SELECTED2");
+                    break;
+                case 3:
+                    _thirdInvImage.transform.parent.GetComponentInParent<Image>().sprite = _selectedSprite;
+                    print("SELECTED3");
+                    break;
+                default:
+                    ResetIcons();
+                    break;
+            }
+
             if (_item[selected].ItemGameObject == null)
             {
                 HideAllItems();
@@ -112,6 +141,13 @@ namespace Gamecraft.Player
                         break;
                 }
             }
+        }
+
+        private void ResetIcons()
+        {
+            _firstInvImage.transform.parent.GetComponentInParent<Image>().sprite = _normalSprite;
+            _secondInvImage.transform.parent.GetComponentInParent<Image>().sprite = _normalSprite;
+            _thirdInvImage.transform.parent.GetComponentInParent<Image>().sprite = _normalSprite;
         }
 
         private void HideAllItems()

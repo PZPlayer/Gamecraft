@@ -64,16 +64,16 @@ namespace Gamecraft.Items
 
         public bool PickUp()
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, _showUpRadius);
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, _pickUpRadius);
 
             foreach (var collider in hitColliders)
             {
                 Inventory inv = collider.GetComponent<Inventory>();
                 if (inv != null && Input.GetKeyDown(KeyCode.E))
                 {
-                    if(_itemDesc.ItemGameObject == null) _itemDesc.ItemGameObject = GetObjectOnScene();
-                    inv.AddItem(_itemDesc);
-                    Destroy(gameObject);
+                    if (_itemDesc.ItemGameObject == null) _itemDesc.ItemGameObject = GetObjectOnScene();
+                    bool can = inv.AddItem(_itemDesc);
+                    if (can) Destroy(gameObject);
                 }
             }
             return false;

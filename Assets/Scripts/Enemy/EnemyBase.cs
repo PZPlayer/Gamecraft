@@ -2,6 +2,7 @@ using Gamecraft.Player;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 namespace Gamecraft.Enemy
 {
@@ -16,7 +17,10 @@ namespace Gamecraft.Enemy
         [SerializeField] private float _fieldOfViewAngle = 90f;
         [SerializeField] private LayerMask _obstacleLayer;
         [SerializeField] private float _waitTime = 2f;
+        [SerializeField] private Animator _anmtr;
+        [SerializeField] private GameObject _gun;
 
+        private bool isReactingToTarget = false;
         private int currentPatrolIndex = 0;
         private Transform target;
         private Health targetHealth;
@@ -26,6 +30,8 @@ namespace Gamecraft.Enemy
 
         private EnemyGun gun;
         private NavMeshAgent navMeshAgent;
+
+        public UnityEvent OnMeetPlayer;
 
         private void Start()
         {
@@ -38,16 +44,23 @@ namespace Gamecraft.Enemy
         {
             if (target == null)
             {
-                if (!isWaiting && !navMeshAgent.pathPending && (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance || !navMeshAgent.hasPath))
+                _gun.SetActive(false);
+                if (!isWaiting && !navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance + stopDistance)
                 {
-                    Patrol();
+                    if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
+                    {
+                        Patrol();
+                    }
                 }
                 SearchForTarget();
             }
             else
             {
+                _gun.SetActive(true);
                 ChaseTarget();
             }
+
+            _anmtr.SetBool("Run", navMeshAgent.isStopped ? false : true);
         }
 
         private void Patrol()
@@ -57,6 +70,11 @@ namespace Gamecraft.Enemy
             navMeshAgent.isStopped = false;
             Transform targetPoint = _patrolPoints[currentPatrolIndex];
             navMeshAgent.SetDestination(targetPoint.position);
+
+            if (Vector3.Distance(transform.position, targetPoint.position) <= navMeshAgent.stoppingDistance + stopDistance)
+            {
+                StartCoroutine(WaitAtPoint());
+            }
         }
 
         private IEnumerator WaitAtPoint()
@@ -68,6 +86,7 @@ namespace Gamecraft.Enemy
             navMeshAgent.isStopped = false;
 
             currentPatrolIndex = GetRandomPatrolIndex();
+            Patrol();
         }
 
         private int GetRandomPatrolIndex()
@@ -79,6 +98,16 @@ namespace Gamecraft.Enemy
             } while (newIndex == currentPatrolIndex && _patrolPoints.Length > 1);
 
             return newIndex;
+        }
+
+        private IEnumerator PlayReactionAnimation()
+        {
+            navMeshAgent.isStopped = true;
+            _anmtr.SetTrigger("Meet");
+
+            yield return new WaitForSeconds(2f);
+
+            navMeshAgent.isStopped = false;
         }
 
         private void SearchForTarget()
@@ -100,6 +129,8 @@ namespace Gamecraft.Enemy
                             target = hitCollider.transform;
                             targetHealth = health;
                             isChasing = true;
+                            StartCoroutine(PlayReactionAnimation());
+                            OnMeetPlayer.Invoke();
                             navMeshAgent.speed = _chaseSpeed;
                             break;
                         }
@@ -141,7 +172,7 @@ namespace Gamecraft.Enemy
 
                 if (gun != null)
                 {
-                    gun.Shoot();
+                    gun.Shoot(_anmtr);
                 }
             }
         }
