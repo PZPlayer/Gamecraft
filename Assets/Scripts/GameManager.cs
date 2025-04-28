@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
     public GameObject DropOfWater;
     public GameObject Key;
     public GameObject Gun;
+    public GameObject Inventory;
+    public GameObject ChatBox;
+    public GameObject CameraScript;
     public Animator PlayerAnimator;
     public bool ifAiming;
 
