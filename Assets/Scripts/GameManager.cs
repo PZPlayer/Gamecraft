@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public GameObject ChatBox;
     public GameObject CameraScript;
     public Animator PlayerAnimator;
+    public Animator UIDeathAnimator;
     public bool ifAiming;
 
     public static GameManager Instance;

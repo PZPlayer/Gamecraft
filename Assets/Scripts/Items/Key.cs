@@ -20,7 +20,11 @@ namespace Gamecraft.Other
             _mesh.SetActive(false);  
         }
 
-        
+        private void OnEnable()
+        {
+            _mesh.SetActive(true);
+        }
+
 
         public bool PickUp()
         {
@@ -45,11 +49,20 @@ namespace Gamecraft.Other
 
             foreach (Collider collider in hitColliders)
             {
-                if (collider.GetComponent<Door>() != null)
+                if (collider.GetComponent<Door>() != null || collider.GetComponent<Train>() != null)
                 {
-                    collider.GetComponent<Door>().Open();
-                    Disapear();
-                    return false;
+                    if (collider.GetComponent<Door>())
+                    {
+                        collider.GetComponent<Door>().Open();
+                        Disapear();
+                        return false;
+                    }
+                    else
+                    {
+                        collider.GetComponent<Train>().EngineStart();
+                        Disapear();
+                        return false;
+                    }
                 }
             }
             return true;
