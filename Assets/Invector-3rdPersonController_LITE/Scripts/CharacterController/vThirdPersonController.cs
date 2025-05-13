@@ -7,10 +7,13 @@ namespace Invector.vCharacterController
         [HideInInspector] public bool ifAiming;
 
         [SerializeField] private Animator _anmtr;
+        [SerializeField] private AudioSource _walkingSound;
+        
 
         private void Start()
         {
             animator = _anmtr;
+            GameManager.Instance.AudioEffects.Add(_walkingSound);
         }
 
         public virtual void ControlAnimatorRootMotion()
@@ -84,13 +87,25 @@ namespace Invector.vCharacterController
                 moveDirection = Vector3.Lerp(moveDirection, Vector3.zero, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
                 animator.SetBool("Run", false);
                 animator.SetBool("Move", false);
-                
+                _walkingSound.Stop();
+
                 return;
             }
             else
             {
                 animator.SetBool("Move", true);
                 animator.SetBool("Run", isSprinting ? true : false);
+                if(!_walkingSound.isPlaying && isGrounded)
+                {
+                    if (isSprinting)
+                    {
+                        _walkingSound.Play();
+                    }
+                    else
+                    {
+                        _walkingSound.Stop();
+                    }
+                }
             }
 
             if (referenceTransform && !rotateByWorld)

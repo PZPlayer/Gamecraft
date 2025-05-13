@@ -16,17 +16,24 @@ namespace Gamecraft.Items
         [SerializeField] private float _healRadius;
         [SerializeField] private int _healAmount;
         [SerializeField] private ParticleSystem _partcls;
+        [SerializeField] private AudioSource _drinkSound;
+
+
+        private void Start()
+        {
+            if(!_canBePicked) GameManager.Instance.AudioEffects.Add(_drinkSound);
+        }
 
         private void OnEnable()
         {
             animator = GetComponent<Animator>();
             _mesh.SetActive(true);
             animator.SetTrigger("Restart");
-            
         }
 
         public void Disapear()
         {
+            _drinkSound.Play();
             _mesh.SetActive(false);
             _partcls.Play();
         }
@@ -46,6 +53,7 @@ namespace Gamecraft.Items
                 Health health = collider.GetComponent<Health>();
                 if (health != null)
                 {
+                    
                     health.HealBody(_healAmount);
                 }
             }

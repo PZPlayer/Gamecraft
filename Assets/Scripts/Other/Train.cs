@@ -10,10 +10,11 @@ namespace Gamecraft.Other
         [SerializeField] private GameObject _key;
         [SerializeField] private Transform _keySpawn;
         [SerializeField] private Animator _animator;
-
-        private Vector3 oldPlayerPos;
+        [SerializeField] private Vector3 oldPlayerPos;
 
         public UnityEvent OnEngineStart;
+        public UnityEvent OnEngineEnd;
+        
 
 
         public void UnlockVans() => _ifLockedVans = false;
@@ -25,7 +26,12 @@ namespace Gamecraft.Other
             Instantiate(_key, _keySpawn);
         }
 
-        private void ThrowPlayerBack() => GameManager.Instance.Player.transform.position = oldPlayerPos;
+        private void ThrowPlayerBack()
+        {
+            print(oldPlayerPos);
+            GameManager.Instance.Player.transform.position = oldPlayerPos;
+            print(GameManager.Instance.Player.transform.position);
+        } 
 
         public void EngineStart()
         {
@@ -40,6 +46,11 @@ namespace Gamecraft.Other
             }
 
             _animator.SetTrigger("Start");
+        }
+
+        public void OnEndAnim()
+        {
+            OnEngineEnd.Invoke();
         }
     }
 }

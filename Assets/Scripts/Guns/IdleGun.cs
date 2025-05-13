@@ -31,6 +31,8 @@ namespace Gamecraft.Guns
         [SerializeField] private float lineWidth = 0.05f;
         [SerializeField] private float _showUpRadius;
 
+        [SerializeField] private AudioSource _shootingSound;
+
         private Vector3 cameraForward;
 
         private LineRenderer lineRenderer;
@@ -50,6 +52,8 @@ namespace Gamecraft.Guns
             lineRenderer.endWidth = lineWidth;
             lineRenderer.positionCount = 2;
             lineRenderer.enabled = false;
+            if(_shootingSound == null) _shootingSound = GetComponent<AudioSource>();
+            if (_ifMain) GameManager.Instance.AudioEffects.Add(_shootingSound);
         }
 
         public bool Use()
@@ -108,12 +112,15 @@ namespace Gamecraft.Guns
 
         protected virtual void Shoot()
         {
+            if(!_ifMain) return;
+
             Vector3 startPoint = IsAiming ? Camera.main.transform.position : _shootPoint.transform.position;
             Vector3 direction = IsAiming ? cameraForward : _shootPoint.transform.forward;
 
     
             RaycastHit hit;
             DrawShotLine(startPoint, direction);
+            _shootingSound.Play();
             if (Physics.Raycast(startPoint, direction, out hit, _range, _layerMask))
             {
                 Debug.Log("Попал в: " + hit.collider.name);

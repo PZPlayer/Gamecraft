@@ -10,18 +10,21 @@ namespace Gamecraft.Player
         [SerializeField] private UnityEvent OnDeath;
 
         [SerializeField] private int _maxHealth;
-        [SerializeField] private int curHealth;
+        [SerializeField] private int _curHealth;
+
+        public float CurentHealth { get { return _curHealth; } }
+        public float MaxHealth { get { return _maxHealth; } }
 
         void Start ()
         {
-            curHealth = _maxHealth;
+            _curHealth = _maxHealth;
         }
 
         public void DamageBody(int damage)
         {
-            curHealth -= damage;
+            _curHealth -= damage;
             OnTakeDamage.Invoke();
-            if (curHealth < 0)
+            if (_curHealth < 0)
             {
                 Death();
             }
@@ -29,7 +32,7 @@ namespace Gamecraft.Player
 
         public void HealBody(int heal)
         {
-            curHealth = Mathf.Clamp(curHealth + heal, 0, _maxHealth);
+            _curHealth = Mathf.Clamp(_curHealth + heal, 0, _maxHealth);
             OnTakeHeal.Invoke();
         }
 

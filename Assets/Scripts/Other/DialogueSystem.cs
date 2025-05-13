@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using Gamecraft.Player;
 
 
 namespace Gamecraft.Other
@@ -14,7 +15,6 @@ namespace Gamecraft.Other
         public List<string> Options;
         public List<int> NextTalkIndices;
     }
-
 
     public class DialogueSystem : MonoBehaviour
     {
@@ -74,6 +74,7 @@ namespace Gamecraft.Other
         private void StartDialogue()
         {
             _currentTalkIndex = 0;
+            GameManager.Instance.Player.GetComponent<PlayerFreeze>().Freeze();
             _inventory.SetActive(false);
             _chatBox.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
@@ -93,6 +94,7 @@ namespace Gamecraft.Other
 
         private void EndDialogue()
         {
+            GameManager.Instance.Player.GetComponent<PlayerFreeze>().UnFreeze();
             _isInDialogue = false;
             _mainCamera.transform.position = _originalCameraPosition;
             _mainCamera.transform.rotation = _originalCameraRotation;

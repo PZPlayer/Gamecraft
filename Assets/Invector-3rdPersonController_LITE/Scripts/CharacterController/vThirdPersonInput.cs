@@ -33,6 +33,7 @@ namespace Invector.vCharacterController
         [HideInInspector] public Dash DashController;
         [HideInInspector] public vThirdPersonCamera tpCamera;
         [HideInInspector] public Camera cameraMain;
+        [SerializeField] protected AudioSource _jumpingSound;
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace Invector.vCharacterController
         {
             InitilizeController();
             InitializeTpCamera();
+            GameManager.Instance.AudioEffects.Add(_jumpingSound);
         }
 
         protected virtual void FixedUpdate()
@@ -207,6 +209,7 @@ namespace Invector.vCharacterController
             if (Input.GetKeyDown(jumpInput) && JumpConditions())
             {
                 cc.Jump();
+                _jumpingSound.Play();
                 GameManager.Instance.PlayerAnimator.SetTrigger("Jump");
             }
                 

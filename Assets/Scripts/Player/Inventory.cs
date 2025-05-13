@@ -1,10 +1,6 @@
-using Gamecraft.Guns;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 namespace Gamecraft.Player
 {
@@ -23,12 +19,16 @@ namespace Gamecraft.Player
         [SerializeField] private Image _thirdInvImage;
         [SerializeField] private Sprite _selectedSprite;
         [SerializeField] private Sprite _normalSprite;
+        [SerializeField] private AudioSource _pickupSound;
+        [SerializeField] private AudioSource _changeItemSound;
         private int selected = 0;
 
 
         void Start ()
         {
             UpdateQuickInv();
+            GameManager.Instance.AudioEffects.Add(_pickupSound);
+            GameManager.Instance.AudioEffects.Add(_changeItemSound);
         }
 
         public void ChangeItem(int index)
@@ -40,6 +40,7 @@ namespace Gamecraft.Player
                 selected = 0;
                 return;
             }
+            _changeItemSound.Play();
             selected = index;
             print(selected);
             UpdateItem();
@@ -76,6 +77,7 @@ namespace Gamecraft.Player
                     _item[itemOnScene.SlotIndex] = item;
                     UpdateItem();
                     UpdateQuickInv();
+                    _pickupSound.Play();
                     return true;
                 }
             }
@@ -86,6 +88,7 @@ namespace Gamecraft.Player
 
         private void LooseItem(int index)
         {
+            _item[index].ItemGameObject.SetActive(false);
             _item[index].ItemGameObject = null;
             _item[index].ItemInfo = null;
         }

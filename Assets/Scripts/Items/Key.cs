@@ -54,13 +54,13 @@ namespace Gamecraft.Other
                     if (collider.GetComponent<Door>())
                     {
                         collider.GetComponent<Door>().Open();
-                        Disapear();
+                        GameManager.Instance.Key.SetActive(false);
                         return false;
                     }
                     else
                     {
                         collider.GetComponent<Train>().EngineStart();
-                        Disapear();
+                        GameManager.Instance.Key.SetActive(false);
                         return false;
                     }
                 }

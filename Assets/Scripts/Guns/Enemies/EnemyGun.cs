@@ -74,7 +74,7 @@ namespace Gamecraft.Enemy
             bullet.SetActive(false);
         }
 
-        public virtual void Shoot(Animator anmtr = null)
+        public virtual void Shoot(Animator anmtr = null, AudioSource audioSource = null)
         {
             if(fireRateTimer > _fireRate)
             {
@@ -83,6 +83,7 @@ namespace Gamecraft.Enemy
                 if(bullet != null)
                 {
                     OnShoot.Invoke();
+                    audioSource.Play();
                     if (anmtr != null) anmtr.SetTrigger("Shoot");
                     int randomShootPoint = Random.Range(0, _shootPoints.Length -1);
                     bullet.SetActive(false);
